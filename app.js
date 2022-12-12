@@ -10,6 +10,6 @@ app.get("/api/topics", getTopics);
 app.get("*/*", (request, response) => {
     response 
     .status(404)
-    .send({status: 404, msg: `Error: endpoint (${request.path}) not found`})
+    .send({msg: `Error: endpoint not found`})
 })
 module.exports = app;

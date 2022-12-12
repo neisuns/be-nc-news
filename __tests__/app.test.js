@@ -13,7 +13,7 @@ beforeEach(() => {
     return seed(testData)
 });
 
-describe.only("/api/topics", () => {
+describe("/api/topics", () => {
     describe("GET", () => {
         test("200: Returns an array of topics, each of which should have properties of slug and description", () => {
             return request(app)
@@ -31,6 +31,17 @@ describe.only("/api/topics", () => {
                );
             })
             });
+        })
+    })
+})
+    describe("404: endpoints not found", () => {
+    test("should return a message and an error status code", () => {
+        return request(app)
+        .get("/invalidpath")
+        .expect(404)
+        .then(({body}) => {
+            console.log(body)
+            expect(body).toEqual({msg: "Error: endpoint not found"})
         })
     })
 })
