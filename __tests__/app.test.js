@@ -40,7 +40,6 @@ describe("/api/topics", () => {
         .get("/invalidpath")
         .expect(404)
         .then(({body}) => {
-            console.log(body)
             expect(body).toEqual({msg: "Error: endpoint not found"})
         })
     })
