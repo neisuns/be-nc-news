@@ -19,8 +19,7 @@ describe("/api/topics", () => {
             return request(app)
             .get("/api/topics")
             .expect(200)
-            .then(({body}) => {
-               const { topics } = body
+            .then(({body : { topics }}) => {
                expect(topics).toHaveLength(3);
                topics.forEach((topic) => {
                expect(topic).toEqual(
@@ -33,7 +32,7 @@ describe("/api/topics", () => {
             });
         })
     })
-})
+});
     describe("404: endpoints not found", () => {
     test("should return a message and an error status code", () => {
         return request(app)
@@ -43,4 +42,4 @@ describe("/api/topics", () => {
             expect(body).toEqual({msg: "Error: endpoint not found"})
         })
     })
-})
+});

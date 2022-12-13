@@ -3,7 +3,7 @@
 As .env.* is added to the .gitignore, anyone who wishes to clone your repo will not have access to the necessary environment variables. 
 
 ## Instructions
-1. Fork and clon a repository locally
+1. Fork and clone a repository locally
 2. Run `npm install` in order to download the required packages 
 3. Create two sepearate .env files in the root directory and name them as follows:
     - **.env.development**
