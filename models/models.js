@@ -15,13 +15,7 @@ exports.selectArticles = () => {
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC;`
     ).then((response) => {
-        if (!response) {
-            return Promise.reject({
-                status: 404,
-                msg: "Error 404: Does not exist",
-            });
-        }
-        return response;
-    })
-}
+        return response.rows;
+    }
+    )}
 

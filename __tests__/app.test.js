@@ -49,8 +49,8 @@ describe("/api/articles", () => {
       return request(app)
       .get(`/api/articles`)
       .expect(200)
-      .then(({body : {articleRows}}) => {
-        articleRows.forEach((article) => {
+      .then(({body : {articles}}) => {
+        articles.forEach((article) => {
             expect(article).toEqual(
             expect.objectContaining({
                 author: expect.any(String),
@@ -60,7 +60,6 @@ describe("/api/articles", () => {
                 created_at: expect.any(String),
                 votes: expect.any(Number),
                 comment_count: expect.any(Number),
-                body: expect.any(String),
             })
             );
           })
@@ -70,8 +69,8 @@ describe("/api/articles", () => {
         return request(app)
         .get("/api/articles")
         .expect(200)
-        .then(({body: {articleRows}}) => {
-          expect(articleRows).toBeSortedBy("created_at", {descending: true})
+        .then(({body: {articles}}) => {
+          expect(articles).toBeSortedBy("created_at", {descending: true})
         });
       });
 });
