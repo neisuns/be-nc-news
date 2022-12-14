@@ -9,8 +9,7 @@ exports.getTopics = (request, response) => {
 
 exports.getArticles = (request, response, next) => {
     selectArticles().then((articles) => {
-        let articleRows = articles.rows
-        response.status(200).send({articleRows});
+        response.status(200).send({articles: articles});
     })
     .catch((error) => {
         next(error); 
