@@ -34,7 +34,8 @@ exports.selectArticleID = (id) => {
 exports.selectArticleComments = (id) => {
     return db.query(
         `SELECT * FROM comments
-        WHERE article_id = $1;`, [id]
+        WHERE article_id = $1
+        ORDER BY comments.created_at DESC;`, [id]
     )
     .then((response) => {
         if (response.rows.length === 0) {

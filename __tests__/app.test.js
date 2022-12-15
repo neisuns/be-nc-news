@@ -140,6 +140,14 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([])
       })
     })
+    test("200: Repsonds with an array of comments in descending order", () => {
+      return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((comments) => {
+        expect(comments.body.comments).toBeSortedBy("created_at", {descending: true})
+      })
+    })
     test("400: Responds with bad request if article_id is not of a correct data type", () => {
       return request(app)
       .get("/api/articles/cats/comments")
