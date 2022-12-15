@@ -112,3 +112,49 @@ describe("/api/articles/:article_id", () => {
     })
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("200: Responds with a array of all comments when passed in the article_id", () => {
+      return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBeGreaterThan(0);
+        body.comments.forEach((comment) => {
+          expect.objectContaining({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            body: expect.any(String),
+          })
+        })
+      })
+    })
+    test("200: Responds with an empty array when there are no comments in a given articke_id", () => {
+      return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments).toEqual([])
+      })
+    })
+    test("400: Responds with bad request if article_id is not of a correct data type", () => {
+      return request(app)
+      .get("/api/articles/cats/comments")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 400: Bad request");
+      })
+    })
+    test("404: Responds with 404 if there is no such article_id", () => {
+      return request(app)
+      .get("/api/articles/100/comments")
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 404: Does not exist")
+      })
+    })
+  })
+})
