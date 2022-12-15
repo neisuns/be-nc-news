@@ -20,11 +20,11 @@ app.use((error, request, response, next) => {
     } else next(error)
 })
 
-// app.use((error, request, response, next) => {
-//     if (error.msg) {
-//         response.status(404).send({msg : error.msg });
-//     } else next(error);
-// });
+app.use((error, request, response, next) => {
+    if (error.msg) {
+        response.status(404).send({msg : error.msg });
+    } else next(error);
+});
 
 app.use((error, request, response, next) => {
     console.log(error)
