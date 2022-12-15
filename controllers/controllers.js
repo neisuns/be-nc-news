@@ -1,5 +1,5 @@
 const { response } = require("../app");
-const { selectTopics, selectArticles } = require("../models/models");
+const { selectTopics, selectArticles, selectArticleID } = require("../models/models");
 
 exports.getTopics = (request, response) => {
     selectTopics().then((topic) => {
@@ -13,5 +13,15 @@ exports.getArticles = (request, response, next) => {
     })
     .catch((error) => {
         next(error); 
+    });
+};
+
+exports.getArticleID = (request, response, next) => {
+    const articleID = request.params.article_id;
+    selectArticleID(articleID).then((article) => {
+        response.status(200).send({article});
     })
+    .catch((error) => {
+        next(error); 
+    });
 }
