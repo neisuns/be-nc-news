@@ -39,7 +39,7 @@ describe("404: endpoints not found", () => {
       .get("/invalidpath")
       .expect(404)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Error: Does not exist" });
+        expect(body).toEqual({ msg: "Error 404: Does not exist" });
       });
   });
 });
@@ -75,22 +75,39 @@ describe("/api/articles", () => {
       });
 });
 });  
-
-
-
-
-
-
-
-
-
-
-
-// test("200: Responds with a new property of comment_count which has the correct number of comments by aricle_id", () => {
-//         return request(app)
-//         .get("/api/articles/1")
-//         .expect(200)
-//         .then(({body}) => {
-//           expect(body.article.comment_count).toBe("11")
-//         })
-//       })
+describe("/api/articles/:article_id", () => {
+  describe("GET", () => {
+    test("200: Responds with an article object with its properties", () => {
+      return request(app)
+      .get(`/api/articles/1`)
+      .expect(200)
+      .then(({body : {article}}) => {
+        expect(article).toEqual({
+          author:"butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic:"mitch",
+          created_at: expect.any(String),
+          votes:100,
+        });
+      });
+    }); 
+    test("400: Responds with bad request if article_id is invalid", () => {
+      return request(app)
+        .get("/api/articles/743hsvb")
+        .expect(400)
+        .then(({ body : { msg }}) => {
+          expect(msg).toBe("Error 400: Bad request");
+    });
+  });
+    test("404: Responds with does not exist if article_id is non-exisitent", () =>{
+      return request(app)
+      .get("/api/articles/100")
+      .expect(404)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("Error 404: Does not exist");
+      })
+    })
+  });
+});
