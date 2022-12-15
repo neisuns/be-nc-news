@@ -31,21 +31,3 @@ exports.selectArticleID = (id) => {
         return rows[0];
     })
 }
-
-exports.postComment = (id, body, username) => {
-    const existingUsers = ["butter_bridge", "icellusedkars", "rogersop", "lurker"];
-    if (!username || !body) {
-        return Promise.reject({status: 400, msg: "Bad request"});
-    }
-    if (!existingUsers.includes(username)) {
-        return Promise.reject({status: 404, msg: "Does not exist"});
-    }
-    return db.query(
-        `INSERT INTO comments (article_id, body, author)
-        VALUES ($1, $2, $3)
-        RETURNING *;`, [id, username, body]
-    )
-    .then((response) => {
-        return response.rows[0];
-    })
-}

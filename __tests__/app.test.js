@@ -112,23 +112,3 @@ describe("/api/articles/:article_id", () => {
     })
   });
 });
-describe("/api/articles/:article_id/comments", () => {
-  describe("POST", () => {
-    test("201: Should take a username and body property and responds with the posted comment", () => {
-      return request(app)
-      .post("/api/articles/2/comments")
-      .send({usernanme: "butter_bridge", body:"cats"})
-      .expect(201)
-      .then(({body}) => {
-        expect(body.comment).toEqual({
-          body: "cats",
-          votes: 0,
-          author: "butter_bridge",
-          article_id: 2,
-          comment_id: expect.any(Number),
-          created_at: expect.any(String)
-        })
-      })
-    })
-  })
-})

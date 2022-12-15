@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics, getArticles, getArticleID, postComment } = require("./controllers/controllers");
+const { getTopics, getArticles, getArticleID } = require("./controllers/controllers");
 const app = express();
 
 //GET
@@ -7,8 +7,6 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleID)
 
-//POST
-app.post("/api/articles/:article_id/comments", postComment);
 
 //404 INVALID PATH
 app.all("*", (request, response) => {
@@ -28,11 +26,6 @@ app.use((error, request, response, next) => {
         response.status(404).send({msg : error.msg });
     } else next(error);
 });
-app.use((error, request, response, next) => {
-    if (error.code === "23503") {
-        response.status(404).send({msg: "Error 404: Does not exist"})
-    } else next(error);
-})
 
 app.use((error, request, response, next) => {
     console.log(error)
