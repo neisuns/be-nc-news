@@ -31,6 +31,16 @@ exports.selectArticleID = (id) => {
         return rows[0];
     })
 }
+
+exports.insertComments = (id, body, author) => {
+    return db.query(
+        `INSERT INTO comments (article_id, body, author) 
+        values ($1, $2, $3)
+        RETURNING *;`, [id, body, author]
+        )
+        .then((comment) => {
+        return comment.rows[0]
+
 exports.selectArticleComments = (id) => {
     return db.query(
         `SELECT * FROM comments
