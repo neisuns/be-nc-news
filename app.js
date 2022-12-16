@@ -1,5 +1,7 @@
+const { application } = require("express");
 const express = require("express");
-const { getTopics, getArticles, getArticleID, postComments } = require("./controllers/controllers");
+
+const { getTopics, getArticles, getArticleID, getArticleComments } = require("./controllers/controllers");
 const app = express();
 app.use(express.json())
 
@@ -7,6 +9,7 @@ app.use(express.json())
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleID)
+app.get("/api/articles/:article_id/comments", getArticleComments)
 
 //POST
 app.post("/api/articles/:article_id/comments", postComments)
@@ -18,7 +21,8 @@ app.all("*", (request, response) => {
     .send({msg: `Error 404: Does not exist`})
 })
 
-//PSQL ERRORS 
+
+//PSQL ERRORS
 app.use((error, request, response, next) => {
     if (error.code === "22P02" || error.code === "23502") {
         response.status(400).send({ msg: "Error 400: Bad request"})
