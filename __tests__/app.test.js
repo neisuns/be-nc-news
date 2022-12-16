@@ -112,3 +112,64 @@ describe("/api/articles/:article_id", () => {
     })
   });
 });
+describe("/api/article_id/comments", () => {
+  describe("POST", () => {
+    test("201: Should take a username and body property and respond with the posted comment", () => {
+      const newComment = {
+        author: "butter_bridge",
+        body: "Kachow"
+      }
+      return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({body: {comment}}) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+          body: "Kachow",
+          votes: 0,
+          author: "butter_bridge",
+          article_id: 2,
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+        }))
+      })
+    })
+    test("400: Should respond with bad request if no username is inputted", () => {
+      return request(app)
+      .post("/api/articles/2/comments")
+      .send({body: "Kachow"})
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 400: Bad request")
+      })
+    })
+    test("400: Should respond with a bad request if article_id is invalid", () => {
+      return request(app)
+      .post("/api/articles/ghibli/comments")
+      .send({ author: "butter_bridge", body:"Kachow"})
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 400: Bad request")
+      })
+    })
+    test("404: Should respond with a invalid request if article_id does not exist", () => {
+      return request(app)
+      .post("/api/articles/100/comments")
+      .send({ author: "butter_bridge", body:"Kachow"})
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 404: Does not exist")
+      })
+    })
+    test("404: Should respond with a invalid request if author does not exist", () => {
+      return request(app)
+      .post("/api/articles/2/comments")
+      .send({ author: "Lightning McQueen", body:"Kachow"})
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 404: Does not exist")
+      })
+    })
+  })
+})

@@ -1,12 +1,15 @@
 const express = require("express");
-const { getTopics, getArticles, getArticleID } = require("./controllers/controllers");
+const { getTopics, getArticles, getArticleID, postComments } = require("./controllers/controllers");
 const app = express();
+app.use(express.json())
 
 //GET
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleID)
 
+//POST
+app.post("/api/articles/:article_id/comments", postComments)
 
 //404 INVALID PATH
 app.all("*", (request, response) => {
@@ -15,9 +18,12 @@ app.all("*", (request, response) => {
     .send({msg: `Error 404: Does not exist`})
 })
 
+//PSQL ERRORS 
 app.use((error, request, response, next) => {
-    if (error.code === "22P02") {
+    if (error.code === "22P02" || error.code === "23502") {
         response.status(400).send({ msg: "Error 400: Bad request"})
+    } else if (error.code === "23503"){
+        response.status(404).send({msg: "Error 404: Does not exist"})
     } else next(error)
 })
 
@@ -27,6 +33,7 @@ app.use((error, request, response, next) => {
     } else next(error);
 });
 
+//INTERNAL SERVER ERROR
 app.use((error, request, response, next) => {
     console.log(error)
     response.status(500).send({ msg : "Error 500: Internal Server Error" })
