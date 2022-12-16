@@ -112,6 +112,62 @@ describe("/api/articles/:article_id", () => {
     })
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("200: Responds with a array of all comments when passed in the article_id", () => {
+      return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBeGreaterThan(0);
+        body.comments.forEach((comment) => {
+          expect.objectContaining({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            body: expect.any(String),
+          })
+        })
+      })
+    })
+    test("200: Responds with an empty array when there are no comments in a given articke_id", () => {
+      return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments).toEqual([])
+      })
+    })
+    test("200: Repsonds with an array of comments in descending order", () => {
+      return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((comments) => {
+        expect(comments.body.comments).toBeSortedBy("created_at", {descending: true})
+      })
+    })
+    test("400: Responds with bad request if article_id is not of a correct data type", () => {
+      return request(app)
+      .get("/api/articles/cats/comments")
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 400: Bad request");
+      })
+    })
+    test("404: Responds with 404 if there is no such article_id", () => {
+      return request(app)
+      .get("/api/articles/100/comments")
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("Error 404: Does not exist")
+      })
+    })
+  })
+})
+
 describe("/api/article_id/comments", () => {
   describe("POST", () => {
     test("201: Should take a username and body property and respond with the posted comment", () => {
@@ -174,56 +230,66 @@ describe("/api/article_id/comments", () => {
   })
 })
 
-describe("/api/articles/:article_id/comments", () => {
-  describe("GET", () => {
-    test("200: Responds with a array of all comments when passed in the article_id", () => {
+describe("/api/articles/:article_id", () => {
+  describe("PATCH", () => {
+    test("200: Responds with incrementing article votes by the given number and return an updated version of that article", () => {
+      const newVote = { inc_votes: 1};
       return request(app)
-      .get("/api/articles/1/comments")
+      .patch("/api/articles/1")
+      .send(newVote)
       .expect(200)
-      .then(({ body }) => {
-        expect(body.comments.length).toBeGreaterThan(0);
-        body.comments.forEach((comment) => {
-          expect.objectContaining({
-            article_id: 1,
-            comment_id: expect.any(Number),
-            author: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            body: expect.any(String),
-          })
-        })
+      .then(({ body : {article}}) => {
+        expect(article.votes).toBe(101)
       })
     })
-    test("200: Responds with an empty array when there are no comments in a given articke_id", () => {
+    test("200: Should decrement selected article votes by the given number nd return the updated review", () => {
+      const newVote = { inc_votes: -1};
       return request(app)
-      .get("/api/articles/2/comments")
+      .patch("/api/articles/1")
+      .send(newVote)
       .expect(200)
-      .then(({body}) => {
-        expect(body.comments).toEqual([])
+      .then(({ body : {article}}) => {
+        expect(article.votes).toBe(99)
       })
     })
-    test("200: Repsonds with an array of comments in descending order", () => {
+    test("200: Should respond with no changes in the article when given no new votes are received", () => {
+      const newVote = { inc_votes: 0};
       return request(app)
-      .get("/api/articles/2/comments")
+      .patch("/api/articles/1")
+      .send(newVote)
       .expect(200)
-      .then((comments) => {
-        expect(comments.body.comments).toBeSortedBy("created_at", {descending: true})
+      .then(({ body : {article}}) => {
+        expect(article.votes).toBe(100)
       })
     })
-    test("400: Responds with bad request if article_id is not of a correct data type", () => {
+    test("400: Should respond with a bad request if the inc_votes is of an invalid type", () => {
+      const newVote = { inc_votes: "kachow"};
       return request(app)
-      .get("/api/articles/cats/comments")
+      .patch("/api/articles/1")
+      .send(newVote)
       .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe("Error 400: Bad request");
+      .then(({ body : {msg}}) => {
+        expect(msg).toBe("Error 400: Bad request")
       })
     })
-    test("404: Responds with 404 if there is no such article_id", () => {
+    test("400: Should respond with a bad request if the article_id is of an invalid type", () => {
+      const newVote = { inc_votes: 1};
       return request(app)
-      .get("/api/articles/100/comments")
+      .patch("/api/articles/kachow")
+      .send(newVote)
+      .expect(400)
+      .then(({ body : {msg}}) => {
+        expect(msg).toBe("Error 400: Bad request")
+      })
+    })
+    test("404: Should respond with a 404 if an article_id is non-exisitent", () => {
+      const newVote = { inc_votes: 1};
+      return request(app)
+      .patch("/api/articles/100")
+      .send(newVote)
       .expect(404)
-      .then(({body}) => {
-        expect(body.msg).toBe("Error 404: Does not exist")
+      .then(({ body : {msg}}) => {
+        expect(msg).toBe("Error 404: Does not exist")
       })
     })
   })

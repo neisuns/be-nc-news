@@ -1,7 +1,7 @@
 const { application } = require("express");
 const express = require("express");
 
-const { getTopics, getArticles, getArticleID, getArticleComments } = require("./controllers/controllers");
+const { getTopics, getArticles, getArticleID, getArticleComments, postComments, patchArticleVotes } = require("./controllers/controllers");
 const app = express();
 app.use(express.json())
 
@@ -13,6 +13,9 @@ app.get("/api/articles/:article_id/comments", getArticleComments)
 
 //POST
 app.post("/api/articles/:article_id/comments", postComments)
+
+//PATCH
+app.patch("/api/articles/:article_id", patchArticleVotes)
 
 //404 INVALID PATH
 app.all("*", (request, response) => {
