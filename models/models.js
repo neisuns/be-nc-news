@@ -39,7 +39,6 @@ exports.insertComments = (id, body, author) => {
         RETURNING *;`, [id, body, author]
         )
         .then((comment) => {
-            console.log(comment, "<<<<<")
         return comment.rows[0]
     })
 }
