@@ -81,7 +81,7 @@ exports.patchVotes = (id, inc_vote) => {
     if (inc_vote === undefined) {
         return db.query(
             `SELECT * FROM articles
-            WHERE aricle_id = $1;`, [id]
+            WHERE article_id = $1;`, [id]
         )
         .then(({rows}) => {
             return rows[0];
